@@ -20,11 +20,19 @@ public class Cursor {
         self.isOpened = true
     }
     
-    public func get(_ operation: CursorGetOperation) throws -> CursorResult? {
-        var key = MDB_val()
+    public func get(key: Data? = nil, _ operation: CursorGetOperation) throws -> CursorResult? {
+        var lmdbKey = MDB_val()
+        
+        if let key = key {
+            key.withUnsafeBytes {keyPtr in
+                let keyAddress = UnsafeMutableRawPointer(mutating: keyPtr.baseAddress)
+                lmdbKey = MDB_val(mv_size: key.count, mv_data: keyAddress)
+            }
+        }
+        
         var value = MDB_val()
         
-        let status = mdb_cursor_get(handle, &key, &value, operation.lmdbValue())
+        let status = mdb_cursor_get(handle, &lmdbKey, &value, operation.lmdbValue())
         guard status == 0 || status == MDB_NOTFOUND else {
             throw LMDBError.lmdbError(status)
         }
@@ -33,13 +41,13 @@ public class Cursor {
             return nil
         }
         
-        let dataKey = Data(bytes: key.mv_data, count: key.mv_size)
+        let dataKey = Data(bytes: lmdbKey.mv_data, count: lmdbKey.mv_size)
         let dataValue = Data(bytes: value.mv_data, count: value.mv_size)
         
         return CursorResult(key: dataKey, value: dataValue)
     }
     
-    public func put(value: Data, forKey key: Data, operation: CursorPutOperation?) throws {
+    public func put(value: Data, forKey key: Data, _ operation: CursorPutOperation? = nil) throws {
         try key.withUnsafeBytes {keyPtr in
             let keyAddress = UnsafeMutableRawPointer(mutating: keyPtr.baseAddress)
             var lmdbKey = MDB_val(mv_size: key.count, mv_data: keyAddress)

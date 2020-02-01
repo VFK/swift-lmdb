@@ -80,8 +80,8 @@ final class LMDBTests: XCTestCase {
         do {
             let lmdb = try LMDB(url: self.dbDirectory)
             try lmdb.beginTransactionWithCursor { database, cursor in
-                try cursor.put(value: value, forKey: key, operation: .none)
-                try cursor.put(value: value2, forKey: key2, operation: .none)
+                try cursor.put(value: value, forKey: key)
+                try cursor.put(value: value2, forKey: key2)
                 
                 let dbValue1 = try cursor.get(.last)
                 XCTAssertEqual(dbValue1?.key, key2)
@@ -95,6 +95,39 @@ final class LMDBTests: XCTestCase {
                 XCTAssertNoThrow(try cursor.del())
                 XCTAssertNil(try cursor.get(.first))
             }
+        } catch let error {
+            XCTAssertNil(error)
+        }
+    }
+    
+    func testShouldSupportDupSortWithCursor() {
+        let key1 = "master-key".data(using: .utf8)!
+        let value1 = "some".data(using: .utf8)!
+        let value2 = "other".data(using: .utf8)!
+        let value3 = "another".data(using: .utf8)!
+        
+        do {
+            let lmdb = try LMDB(url: self.dbDirectory)
+            try lmdb.beginTransactionWithCursor(flags: [.dupSort, .reverseDup], { (database, cursor) in
+                try cursor.put(value: value1, forKey: key1)
+                try cursor.put(value: value2, forKey: key1)
+                try cursor.put(value: value3, forKey: key1)
+                
+                _ = try cursor.get(key: key1, .firstDup)
+                let dbValue1 = try cursor.get(.getCurrent)
+                XCTAssertEqual(dbValue1?.key, key1)
+                XCTAssertEqual(dbValue1?.value, value1)
+                
+                _ = try cursor.get(.nextDup)
+                let dbValue2 = try cursor.get(.getCurrent)
+                XCTAssertEqual(dbValue2?.key, key1)
+                XCTAssertEqual(dbValue2?.value, value2)
+                
+                _ = try cursor.get(key: key1, .lastDup)
+                let dbValue3 = try cursor.get(.getCurrent)
+                XCTAssertEqual(dbValue3?.key, key1)
+                XCTAssertEqual(dbValue3?.value, value3)
+            })
         } catch let error {
             XCTAssertNil(error)
         }
