@@ -20,7 +20,7 @@ public class Cursor {
         self.isOpened = true
     }
     
-    public func get(_ operation: CursorOperation) throws -> CursorResult? {
+    public func get(_ operation: CursorGetOperation) throws -> CursorResult? {
         var key = MDB_val()
         var value = MDB_val()
         
@@ -39,7 +39,7 @@ public class Cursor {
         return CursorResult(key: dataKey, value: dataValue)
     }
     
-    public func put(value: Data, forKey key: Data, flags: OperationFlags = []) throws {
+    public func put(value: Data, forKey key: Data, operation: CursorPutOperation?) throws {
         try key.withUnsafeBytes {keyPtr in
             let keyAddress = UnsafeMutableRawPointer(mutating: keyPtr.baseAddress)
             var lmdbKey = MDB_val(mv_size: key.count, mv_data: keyAddress)
@@ -47,8 +47,7 @@ public class Cursor {
             try value.withUnsafeBytes {valuePtr in
                 let valueAddress = UnsafeMutableRawPointer(mutating: valuePtr.baseAddress)
                 var lmdbValue = MDB_val(mv_size: value.count, mv_data: valueAddress)
-                
-                let status = mdb_cursor_put(handle, &lmdbKey, &lmdbValue, UInt32(flags.rawValue))
+                let status = mdb_cursor_put(handle, &lmdbKey, &lmdbValue, UInt32(operation?.lmdbValue() ?? 0))
                 guard status == 0 else {
                     throw LMDBError.lmdbError(status)
                 }

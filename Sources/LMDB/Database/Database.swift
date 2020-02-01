@@ -24,7 +24,7 @@ public class Database {
         self.isOpened = true
     }
     
-    public func put(value: Data, forKey key: Data, flags: OperationFlags = []) throws {
+    public func put(value: Data, forKey key: Data, flags: DatabasePutFlags = []) throws {
         try key.withUnsafeBytes {keyPtr in
             let keyAddress = UnsafeMutableRawPointer(mutating: keyPtr.baseAddress)
             var lmdbKey = MDB_val(mv_size: key.count, mv_data: keyAddress)

@@ -1,6 +1,6 @@
 import Clmdb
 
-public enum CursorOperation {
+public enum CursorGetOperation {
     /** Position at first key/data item */
     case first
     

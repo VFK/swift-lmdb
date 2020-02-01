@@ -80,8 +80,8 @@ final class LMDBTests: XCTestCase {
         do {
             let lmdb = try LMDB(url: self.dbDirectory)
             try lmdb.beginTransactionWithCursor { database, cursor in
-                try cursor.put(value: value, forKey: key)
-                try cursor.put(value: value2, forKey: key2)
+                try cursor.put(value: value, forKey: key, operation: .none)
+                try cursor.put(value: value2, forKey: key2, operation: .none)
                 
                 let dbValue1 = try cursor.get(.last)
                 XCTAssertEqual(dbValue1?.key, key2)
