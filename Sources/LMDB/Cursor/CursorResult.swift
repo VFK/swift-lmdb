@@ -1,6 +1,6 @@
 import Foundation
 
 public struct CursorResult {
-    let key: Data
-    let value: Data
+    public let key: Data
+    public let value: Data
 }

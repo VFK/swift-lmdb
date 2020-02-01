@@ -14,7 +14,7 @@ public struct EnvironmentFlags: OptionSet {
      invocations. This option may not always work, depending on how the operating system has allocated memory
      to shared libraries and other uses. The feature is highly experimental.
      */
-    static let fixedMap = EnvironmentFlags(rawValue: MDB_FIXEDMAP)
+    public static let fixedMap = EnvironmentFlags(rawValue: MDB_FIXEDMAP)
 
     /**
      Use a writeable memory map unless MDB_RDONLY is set. This is faster and uses fewer mallocs, but loses
@@ -22,7 +22,7 @@ public struct EnvironmentFlags: OptionSet {
      Incompatible with nested transactions. Do not mix processes with and without MDB_WRITEMAP on the same
      environment. This can defeat durability (mdb_env_sync etc).
      */
-    static let writeMap = EnvironmentFlags(rawValue: MDB_WRITEMAP)
+    public static let writeMap = EnvironmentFlags(rawValue: MDB_WRITEMAP)
     
     /**
      Flush system buffers to disk only once per transaction, omit the metadata flush. Defer that until the
@@ -31,7 +31,7 @@ public struct EnvironmentFlags: OptionSet {
      ACI (atomicity, consistency, isolation) but not D (durability) database property.
      This flag may be changed at any time using mdb_env_set_flags().
      */
-    static let noMetaSync = EnvironmentFlags(rawValue: MDB_NOMETASYNC)
+    public static let noMetaSync = EnvironmentFlags(rawValue: MDB_NOMETASYNC)
     
     /**
      Don't flush system buffers to disk when committing a transaction. This optimization means a system crash
@@ -43,14 +43,14 @@ public struct EnvironmentFlags: OptionSet {
      the system with no hint for when to write transactions to disk, unless mdb_env_sync() is called.
      (MDB_MAPASYNC | MDB_WRITEMAP) may be preferable. This flag may be changed at any time using mdb_env_set_flags().
      */
-    static let noSync = EnvironmentFlags(rawValue: MDB_NOSYNC)
+    public static let noSync = EnvironmentFlags(rawValue: MDB_NOSYNC)
     
     /**
      When using MDB_WRITEMAP, use asynchronous flushes to disk. As with MDB_NOSYNC, a system crash can then corrupt
      the database or lose the last transactions. Calling mdb_env_sync() ensures on-disk database integrity until
      next commit. This flag may be changed at any time using mdb_env_set_flags().
      */
-    static let mapAsync = EnvironmentFlags(rawValue: MDB_MAPASYNC)
+    public static let mapAsync = EnvironmentFlags(rawValue: MDB_MAPASYNC)
     
     /**
      Don't use Thread-Local Storage. Tie reader locktable slots to MDB_txn objects instead of to threads.
@@ -59,7 +59,7 @@ public struct EnvironmentFlags: OptionSet {
      multiplex many user threads over individual OS threads need this option. Such an application must also
      serialize the write transactions in an OS thread, since LMDB's write locking is unaware of the user threads.
      */
-    static let noTls = EnvironmentFlags(rawValue: MDB_NOTLS)
+    public static let noTls = EnvironmentFlags(rawValue: MDB_NOTLS)
     
     /**
      Don't do any locking. If concurrent access is anticipated, the caller must manage all concurrency itself.
@@ -67,14 +67,14 @@ public struct EnvironmentFlags: OptionSet {
      using old transactions while a writer is active. The simplest approach is to use an exclusive lock so that
      no readers may be active at all when a writer begins.
      */
-    static let noLock = EnvironmentFlags(rawValue: MDB_NOLOCK)
+    public static let noLock = EnvironmentFlags(rawValue: MDB_NOLOCK)
     
     /**
      Turn off readahead. Most operating systems perform readahead on read requests by default. This option turns
      it off if the OS supports it. Turning it off may help random read performance when the DB is larger than
      RAM and system RAM is full. The option is not implemented on Windows.
      */
-    static let noReadAhead = EnvironmentFlags(rawValue: MDB_NORDAHEAD)
+    public static let noReadAhead = EnvironmentFlags(rawValue: MDB_NORDAHEAD)
     
     /**
      Don't initialize malloc'd memory before writing to unused spaces in the data file. By default, memory for pages
@@ -89,5 +89,5 @@ public struct EnvironmentFlags: OptionSet {
      is expected to overwrite all of the memory that was reserved in that case. This flag may be changed at any time
      using mdb_env_set_flags().
      */
-    static let noMemInit = EnvironmentFlags(rawValue: MDB_NOMEMINIT)
+    public static let noMemInit = EnvironmentFlags(rawValue: MDB_NOMEMINIT)
 }
