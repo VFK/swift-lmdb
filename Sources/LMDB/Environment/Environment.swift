@@ -4,7 +4,7 @@ import Clmdb
 public class Environment {
     public let isReadOnly: Bool
     public let url: URL
-    var configuration: EnvironmentConfiguration?
+    public var configuration: EnvironmentConfiguration?
     private(set) var isOpened = false
     private(set) var handle: OpaquePointer?
     private let permissions: UInt16 = 0o755

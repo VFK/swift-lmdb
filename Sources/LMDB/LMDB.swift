@@ -2,8 +2,7 @@ import Foundation
 import Clmdb
 
 public class LMDB {
-    private let environment: Environment
-    
+    public let environment: Environment
     private let dbUrl: URL
     private let isReadOnly: Bool
     
@@ -14,6 +13,7 @@ public class LMDB {
         try self.environment = Environment(url: url, isReadOnly: isReadOnly)
     }
     
+    @available(*, deprecated, renamed: "environment.configure")
     public func configureEnvironment( _ configurationHandle: (EnvironmentConfiguration) throws -> ()) throws {
         try self.environment.configure({ (configuration) in
             try configurationHandle(configuration)

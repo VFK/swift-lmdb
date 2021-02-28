@@ -39,7 +39,7 @@ final class LMDBTests: XCTestCase {
     
     func testShouldNotThrowWithNamedDatabaseAndMaxDbsSet() {
         let lmdb = try! LMDB(url: self.dbDirectory)
-        XCTAssertNoThrow(try lmdb.configureEnvironment {configuration in
+        XCTAssertNoThrow(try lmdb.environment.configure { configuration in
             try configuration.setMaxDbs(1)
         })
         XCTAssertNoThrow(try lmdb.beginTransaction(onDatabase: "test") { database in })
